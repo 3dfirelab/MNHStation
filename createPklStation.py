@@ -6,19 +6,28 @@ import sys
 import pdb 
 import pickle 
 import importlib
+import argparse
+import os 
 
 #homebrewed
 import stationdata
-
+import config
 
 if __name__ == '__main__':
 
     importlib.reload(stationdata)
 
-    plotname = 'sha1'
-    dirMNHFiles     = './MNHFiles/'
-    dirStationLoc   = './StationLocSha1/'
-    dirStationPicke = './StationPickeSha1/'
+    parser = argparse.ArgumentParser(description='to create station data pickle from 000.nc files')
+    parser.add_argument('-i','--input', help='Input run name',required=True)
+    args = parser.parse_args()
+
+    runName = args.input
+    inputConfig = importlib.machinery.SourceFileLoader('config_'+runName,os.getcwd()+'/config/config_'+runName+'.py').load_module()
+
+    plotname        = inputConfig.params['plotname']
+    dirMNHFiles     = inputConfig.params['dirMNHFiles']
+    dirStationLoc   = inputConfig.params['dirStationLoc']
+    dirStationPicke = inputConfig.params['dirStationPicke']
         
     # Read the shapefile
     shapefile_path = glob.glob(dirStationLoc+'stationLocationMNH*'+'.shp')[0]
